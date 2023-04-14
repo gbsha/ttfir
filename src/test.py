@@ -8,8 +8,8 @@ def binstr2int(x):
         return -int(x, 2)
     return int(x[1:], 2) - int(x[0], 2) * 2**(bw - 1)
 
-input = [3, 2, 1, 3, 2, 1, 0, 0]
-output_expected = [0, 0, 3, 2, 1, 3, 2, 1]
+input = [3, 2, 1, 3, 2, 1, 0]
+output_expected = [0, 3, 2, 1, 3, 2, 1]
 @cocotb.test()
 async def test_gbsha_top(dut):
     dut._log.info("start")
