@@ -2,11 +2,6 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
 
-def binstr2int(x):
-    bw = len(x)
-    if bw == 1:
-        return -int(x, 2)
-    return int(x[1:], 2) - int(x[0], 2) * 2**(bw - 1)
 
 input = [3, 2, 1, 3, 2, 1, 0]
 output_expected = [0, 3, 2, 1, 3, 2, 1]
