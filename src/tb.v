@@ -9,8 +9,8 @@ that can be driven / tested by the cocotb test.py
 // copy parameters to tb.v, ttfir.v, test.py
 // as files may be used individually
 module tb #(parameter N_TAPS = 10,
-                      BW_in = 2,
-                      BW_out = 2
+                      BW_in = 6,
+                      BW_out = 6
     )
     (
     input clk,
@@ -29,7 +29,8 @@ module tb #(parameter N_TAPS = 10,
     // wire up the inputs and outputs
     wire [7:0] inputs;
     assign inputs[BW_in - 1 + 2:0] = {x_in, rst, clk};
-    assign inputs[7:BW_in + 2] = 0;
+    if (BW_in < 6)
+        assign inputs[7:BW_in + 2] = 0;
     wire [7:0] outputs;
     assign y_out = outputs[BW_out - 1:0];
 

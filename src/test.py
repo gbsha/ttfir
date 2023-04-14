@@ -5,10 +5,10 @@ from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
 # copy parameters to tb.v, ttfir.v, test.py
 # as files may be used individually
 N_TAPS = 10
-BW_in = 2
-BW_out = 2
+BW_in = 6
+BW_out = 6
 
-input = [3, 2, 1, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+input = [63, 62, 61, 60, 59, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 output_expected = input[-N_TAPS:] + input[:-N_TAPS]
 @cocotb.test()
 async def test_gbsha_top(dut):

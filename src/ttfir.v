@@ -3,8 +3,8 @@
 // copy parameters to tb.v, ttfir.v, test.py
 // as files may be used individually
 module gbsha_top #(parameter N_TAPS = 10,
-                             BW_in = 2,
-                             BW_out = 2
+                             BW_in = 6,
+                             BW_out = 6
                              )
 (
   input [7:0] io_in,
