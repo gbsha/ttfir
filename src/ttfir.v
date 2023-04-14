@@ -3,8 +3,8 @@
 // copy parameters to tb.v, ttfir.v, test.py
 // as files may be used individually
 module gbsha_top #(parameter N_TAPS = 10,
-                             BW_in = 1,
-                             BW_out = 1
+                             BW_in = 2,
+                             BW_out = 2
                              )
 (
   input [7:0] io_in,
@@ -24,7 +24,7 @@ module gbsha_top #(parameter N_TAPS = 10,
     reg [BW_in - 1:0] x [N_TAPS - 1: 0];
 
     always @(posedge clk) begin
-        // if reset, set counter to 0
+        // initialize shift register with zeros
         if (reset) begin
             for (integer i = 0; i < N_TAPS; i = i + 1) begin
                 x[i] <= 0;
