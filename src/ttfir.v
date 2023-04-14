@@ -21,7 +21,7 @@ module gbsha_top #(parameter N_TAPS = 2,
     if (BW_out <= 7)
         assign io_out[7:BW_out] = 0;
 
-    reg signed [BW_product - 1:0] x_old;
+    reg signed [BW_in - 1:0] x_old;
     reg signed [BW_sum - 1:0] y;
     
     wire signed [BW_product - 1:0] product [0:N_TAPS - 1];
@@ -33,12 +33,12 @@ module gbsha_top #(parameter N_TAPS = 2,
             x_old <= 0;
             y <= 0;
         end else begin
-            x_old[BW_in -1:0] <= x_in;
+            x_old <= x_in;
             y <= sum;
         end
     end
-    assign product[0] = x_in;
-    assign product[1] = x_old << 1;
+    assign product[0] = -x_in;
+    assign product[1] = x_old;
     assign sum = product[0] + product[1];
 
     assign y_out = y[BW_sum - 1:BW_sum - BW_out];
