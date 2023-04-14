@@ -37,7 +37,7 @@ module gbsha_top #(parameter N_TAPS = 2,
             y <= sum;
         end
     end
-    assign product[0] = 2 * x_in;
+    assign product[0] = x_in + x_in;
     assign product[1] = x_old;
     assign sum = product[0] + product[1];
 
