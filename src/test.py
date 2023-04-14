@@ -8,8 +8,8 @@ def binstr2int(x):
         return -int(x, 2)
     return int(x[1:], 2) - int(x[0], 2) * 2**(bw - 1)
 
-input = [-1, 1, 1, -2, 1, -1, 1, 0, 1, 0, 0, 0, 0, 0]
-output_expected = [0, 0, 1, -2, 0, 3, -3, 2, -2, 1, -1, 1, 0, 0]
+input = [3, 2, 1, 3, 2, 1, 0, 0]
+output_expected = [0, 0, 3, 2, 1, 3, 2, 1]
 @cocotb.test()
 async def test_gbsha_top(dut):
     dut._log.info("start")
@@ -23,7 +23,5 @@ async def test_gbsha_top(dut):
     for i, x in enumerate(input):
         dut.x_in.value = x
         await ClockCycles(dut.clk, 1)
-        output_actual = binstr2int(dut.y_out.value.binstr)
+        output_actual = dut.y_out.value.integer
         print(f"{output_actual = }, expected = {output_expected[i]}")
-    # for (actual, expected) in zip(output, output_expected):
-    #   assert actual == expected

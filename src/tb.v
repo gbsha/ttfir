@@ -11,7 +11,7 @@ module tb (
     input clk,
     input rst,
     input [1:0] x_in,
-    output [3:0] y_out
+    output [1:0] y_out
    );
 
     // this part dumps the trace to a vcd file that can be viewed with GTKWave
@@ -24,7 +24,7 @@ module tb (
     // wire up the inputs and outputs
     wire [7:0] inputs = {4'b0, x_in, rst, clk};
     wire [7:0] outputs;
-    assign y_out = outputs[3:0];
+    assign y_out = outputs[1:0];
 
     // instantiate the DUT
     gbsha_top gbsha_top(
