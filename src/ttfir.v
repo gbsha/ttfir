@@ -3,7 +3,7 @@
 module gbsha_top #(parameter N_TAPS = 2,
                              BW_in = 2,
                              BW_out = 3,
-                             BW_product = 3, // TODO: clarify required sum bitwidth
+                             BW_product = 2,
                              BW_sum = 3
                              )
 (
@@ -18,7 +18,8 @@ module gbsha_top #(parameter N_TAPS = 2,
     wire signed [BW_in - 1:0] x_in = io_in[BW_in - 1 + 2:2];
     wire signed [BW_out - 1:0] y_out;
     assign io_out[BW_out - 1:0] = y_out;
-    assign io_out[7:BW_out] = 0;
+    if (BW_out <= 7)
+        assign io_out[7:BW_out] = 0;
 
     reg signed [BW_in - 1:0] x_old;
     reg signed [BW_sum - 1:0] y;
