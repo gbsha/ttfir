@@ -6,10 +6,11 @@ this testbench just instantiates the module and makes some convenient wires
 that can be driven / tested by the cocotb test.py
 */
 
-// testbench is controlled by test.py
-module tb #(parameter N_TAPS = 1,
-                      BW_in = 2,
-                      BW_out = 2
+// copy parameters to tb.v, ttfir.v, test.py
+// as files may be used individually
+module tb #(parameter N_TAPS = 2,
+                      BW_in = 1,
+                      BW_out = 1
     )
     (
     input clk,
