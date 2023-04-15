@@ -2,9 +2,10 @@
 
 // copy parameters to tb.v, ttfir.v, test.py
 // as files may be used individually
-module gbsha_top #(parameter N_TAPS = 10,
+module gbsha_top #(parameter N_TAPS = 1,
                              BW_in = 6,
-                             BW_out = 6
+                             BW_product = 12,
+                             BW_out = 8
                              )
 (
   input [7:0] io_in,
@@ -13,29 +14,34 @@ module gbsha_top #(parameter N_TAPS = 10,
     // control signals
     wire clk = io_in[0];
     wire reset = io_in[1];
+    reg coefficient_loaded;
 
-    // 
+    // inputs and output
     wire [BW_in - 1:0] x_in = io_in[BW_in - 1 + 2:2];
     wire [BW_out - 1:0] y_out;
     assign io_out[BW_out - 1:0] = y_out;
-    assign io_out[7:BW_out] = 0;
+    if (BW_out < 8)
+        assign io_out[7:BW_out] = 0;
 
-    // shift register
-    reg [BW_in - 1:0] x [N_TAPS - 1: 0];
+    // storage for input, multiplier, output
+    reg [BW_in - 1:0] coefficient;
+    reg [BW_in - 1:0] x;
+    wire [BW_product - 1:0] product;
 
     always @(posedge clk) begin
         // initialize shift register with zeros
         if (reset) begin
-            for (integer i = 0; i < N_TAPS; i = i + 1) begin
-                x[i] <= 0;
-            end                
+            x <= 0;
+            coefficient <= 0;
+            coefficient_loaded <= 0;
+        end else if (!coefficient_loaded) begin
+            coefficient <= x_in;
+            coefficient_loaded <= 1;
         end else begin
-            x[0] <= x_in;
-            for (integer i = 1; i < N_TAPS; i = i + 1) begin
-                x[i] <= x[i - 1];
-            end                
+            x <= x_in;
         end
     end
 
-    assign y_out = x[N_TAPS - 1];
+    assign product = x * coefficient;
+    assign y_out = product[BW_out - 1:0];
 endmodule
