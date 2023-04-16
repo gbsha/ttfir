@@ -42,6 +42,6 @@ module gbsha_top #(parameter N_TAPS = 1,
         end
     end
 
-    assign product = x * coefficient;
+    assign product = x - coefficient;
     assign y_out = product[BW_out - 1:0];
 endmodule

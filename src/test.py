@@ -14,8 +14,13 @@ N_TAPS = 1
 BW_in =  6
 BW_out = 8
 
+# test sequence for multiplication
 input =             [-3, 1, 3,  4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 output_expected = [0, 0,-3,-9,-12,-15,-18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+# test sequence for subtraction
+input =              [3, 1, 3,  4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+output_expected = [0,-3,-2, 0,  1,  2,  3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3]
 
 @cocotb.test()
 async def test_gbsha_top(dut):
