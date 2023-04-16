@@ -17,16 +17,16 @@ module gbsha_top #(parameter N_TAPS = 1,
     reg coefficient_loaded;
 
     // inputs and output
-    wire [BW_in - 1:0] x_in = io_in[BW_in - 1 + 2:2];
-    wire [BW_out - 1:0] y_out;
+    wire signed [BW_in - 1:0] x_in = io_in[BW_in - 1 + 2:2];
+    wire signed [BW_out - 1:0] y_out;
     assign io_out[BW_out - 1:0] = y_out;
     if (BW_out < 8)
         assign io_out[7:BW_out] = 0;
 
     // storage for input, multiplier, output
-    reg [BW_in - 1:0] coefficient;
-    reg [BW_in - 1:0] x;
-    wire [BW_product - 1:0] product;
+    reg signed [BW_in - 1:0] coefficient;
+    reg signed [BW_in - 1:0] x;
+    wire signed [BW_product - 1:0] product;
 
     always @(posedge clk) begin
         // initialize shift register with zeros

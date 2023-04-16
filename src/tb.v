@@ -15,8 +15,8 @@ module tb #(parameter N_TAPS = 1,
     (
     input clk,
     input rst,
-    input [BW_in - 1:0] x_in,
-    output [BW_out - 1:0] y_out
+    input signed [BW_in - 1:0] x_in,
+    output signed [BW_out - 1:0] y_out
    );
 
     // this part dumps the trace to a vcd file that can be viewed with GTKWave
