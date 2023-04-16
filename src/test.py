@@ -15,12 +15,13 @@ BW_in =  6
 BW_out = 8
 
 # test sequence for multiplication
-input =             [-3, 1, 3,  4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-output_expected = [0, 0,-3,-9,-12,-15,-18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+input =             [ 3, 1, 3,  4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+input_sign =        [ 1, 0, 0,  1,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+output_expected = [0, 0,-3,-9, 12,-15,-18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 # test sequence for subtraction
-input =              [3, 1, 3,  4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-output_expected = [0,-3,-2, 0,  1,  2,  3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3]
+# input =              [3, 1, 3,  4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+# output_expected = [0,-3,-2, 0,  1,  2,  3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3]
 
 @cocotb.test()
 async def test_gbsha_top(dut):
@@ -32,8 +33,9 @@ async def test_gbsha_top(dut):
     await ClockCycles(dut.clk, 10)
     dut.rst.value = 0
     dut._log.info("checking...")
-    for i, x in enumerate(input):
+    for i, (x, x_sign) in enumerate(zip(input, input_sign)):
         dut.x_in.value = x
+        dut.x_in_sign.value = x_sign
         await ClockCycles(dut.clk, 1)
         output_actual = binstr2signed_int(dut.y_out.value.binstr)
         print(f"{output_actual = }, expected = {output_expected[i]}")
