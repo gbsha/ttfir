@@ -15,8 +15,7 @@ module tb #(parameter N_TAPS = 1,
     (
     input clk,
     input rst,
-    input [BW_in - 2:0] x_in,
-    input x_in_sign,
+    input signed [BW_in - 1:0] x_in,
     output signed [BW_out - 1:0] y_out
    );
 
@@ -29,7 +28,7 @@ module tb #(parameter N_TAPS = 1,
 
     // wire up the inputs and outputs
     wire [7:0] inputs;
-    assign inputs[BW_in - 1 + 2:0] = {x_in_sign, x_in, rst, clk};
+    assign inputs[BW_in - 1 + 2:0] = {x_in, rst, clk};
     if (BW_in < 6)
         assign inputs[7:BW_in + 2] = 0;
     wire [7:0] outputs;
