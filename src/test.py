@@ -8,8 +8,8 @@ N_TAPS = 5
 BW_in = 6
 BW_out = 8
 
-input = [1, 2, 3, 4, 5, 63, 62, 61, 60, 59, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-input_data = [0, 0, 0, 0, 0, 63, 62, 61, 60, 59, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+input = [1, 2, 3, 4, 5, 30, 31, 32, 33, 34, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+input_data = [0, 0, 0, 0, 0, 30, 31, 32, 31, 30, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 output_expected = input_data[-N_TAPS:] + input_data[:-N_TAPS]
 @cocotb.test()
 async def test_gbsha_top(dut):
@@ -22,7 +22,7 @@ async def test_gbsha_top(dut):
     dut.rst.value = 0
     dut._log.info("checking...")
     for i, x in enumerate(input):
-        dut.x_in.value = x % 2**BW_in
+        dut.x_in.value = x
         await ClockCycles(dut.clk, 1)
         output_actual = dut.y_out.value.integer
-        print(f"{output_actual = }, expected = {output_expected[i] % 2**BW_out}")
+        print(f"{output_actual = }, expected = {output_expected[i]}")
