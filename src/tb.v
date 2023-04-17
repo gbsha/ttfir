@@ -8,9 +8,9 @@ that can be driven / tested by the cocotb test.py
 
 // copy parameters to tb.v, ttfir.v, test.py
 // as files may be used individually
-module tb #(parameter N_TAPS = 10,
+module tb #(parameter N_TAPS = 5,
                       BW_in = 6,
-                      BW_out = 6
+                      BW_out = 8
     )
     (
     input clk,
