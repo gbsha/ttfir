@@ -4,7 +4,7 @@
 // as files may be used individually
 module gbsha_top #(parameter N_TAPS = 5,
                              BW_in = 6,
-                             BW_out = 8 
+                             BW_out = 8
                              )
 (
   input [7:0] io_in,
@@ -58,5 +58,18 @@ module gbsha_top #(parameter N_TAPS = 5,
         end
     end
 
-    assign y_out = x[N_TAPS - 1];
+    // calculate products
+    wire signed [BW_out - 1:0] product [N_TAPS - 1];
+    reg signed [BW_out - 1:0] product_signed [N_TAPS - 1];
+
+    // Tap 0
+    assign product[0] = x[0] * coefficient[0];
+    always @(*) begin
+        case(x_sign[0] + coefficient_sign[0])
+            1'b0: product_signed[0] = product[0];
+            1'b1: product_signed[0] = -product[0];
+        endcase
+    end
+
+    assign y_out = product_signed[0];
 endmodule

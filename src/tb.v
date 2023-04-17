@@ -15,7 +15,7 @@ module tb #(parameter N_TAPS = 5,
     (
     input clk,
     input rst,
-    input [BW_in - 1:0] x_in,
+    input signed [BW_in - 1:0] x_in,
     output [BW_out - 1:0] y_out
    );
 
