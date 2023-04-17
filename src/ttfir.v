@@ -59,18 +59,19 @@ module gbsha_top #(parameter N_TAPS = 5,
     end
 
     // calculate products
-    wire signed [11:0] product;
-    reg signed [11:0] product_signed;
+    wire signed [2 * BW_in:0] product;
+    // reg signed [2 * BW_in:0] product_signed;
 
     // Tap 0
     assign product = x[0] * coefficient[0];
 
-    always @(*) begin
-        case(x_sign[0] + coefficient_sign[0])
-            1'b0: product_signed = product;
-            1'b1: product_signed = -product;
-        endcase
-    end
+    // always @(*) begin
+    //     case(x_sign[0] + coefficient_sign[0])
+    //         1'b0: product_signed = product;
+    //         1'b1: product_signed = -product;
+    //     endcase
+    // end
 
-    assign y_out = product_signed[BW_out - 1:0];
+    // assign y_out = product_signed[BW_out - 1:0];
+    assign y_out = product[BW_out - 1:0];
 endmodule
