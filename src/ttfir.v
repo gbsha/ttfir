@@ -2,7 +2,7 @@
 
 // copy parameters to tb.v, ttfir.v, test.py
 // as files may be used individually
-module gbsha_top #(parameter N_TAPS = 6,
+module gbsha_top #(parameter N_TAPS = 7,
                              BW_in = 6,
                              BW_product = 12,
                              BW_sum = 15,
@@ -42,15 +42,18 @@ module gbsha_top #(parameter N_TAPS = 6,
             x[3] <= 0;
             x[4] <= 0;
             x[5] <= 0;
+            x[6] <= 0;
             coefficient[0] <= 0;
             coefficient[1] <= 0;
             coefficient[2] <= 0;
             coefficient[3] <= 0;
             coefficient[4] <= 0;
             coefficient[5] <= 0;
+            coefficient[6] <= 0;
             sum <= 0;
             coefficient_loaded <= 0;
         end else if (coefficient_loaded < N_TAPS) begin
+            coefficient[6] <= coefficient[5];
             coefficient[5] <= coefficient[4];
             coefficient[4] <= coefficient[3];
             coefficient[3] <= coefficient[2];
@@ -59,7 +62,8 @@ module gbsha_top #(parameter N_TAPS = 6,
             coefficient[0] <= x_in;
             coefficient_loaded <= coefficient_loaded + 1;
         end else begin
-            sum <= product[0] + product[1] + product[2] + product[3] + product[4] + product[5];
+            sum <= product[0] + product[1] + product[2] + product[3] + product[4] + product[5] + product[6];
+            x[6] <= x[5];
             x[5] <= x[4];
             x[4] <= x[3];
             x[3] <= x[2];
@@ -75,6 +79,7 @@ module gbsha_top #(parameter N_TAPS = 6,
     assign product[3] = x[3] * coefficient[3];
     assign product[4] = x[4] * coefficient[4];
     assign product[5] = x[5] * coefficient[5];
+    assign product[6] = x[6] * coefficient[6];
     // assign sum = product[0]; // + product[1]; // WORKS
     // assign sum = product[0] + product[1];     // FAILS
 
