@@ -2,10 +2,10 @@
 
 // copy parameters to tb.v, ttfir.v, test.py
 // as files may be used individually
-module gbsha_top #(parameter N_TAPS = 2,
+module gbsha_top #(parameter N_TAPS = 3,
                              BW_in = 6,
                              BW_product = 12,
-                             BW_sum = 13,
+                             BW_sum = 14,
                              BW_out = 8
                              )
 (
@@ -38,16 +38,20 @@ module gbsha_top #(parameter N_TAPS = 2,
         if (reset) begin
             x[0] <= 0;
             x[1] <= 0;
+            x[2] <= 0;
             coefficient[0] <= 0;
             coefficient[1] <= 0;
+            coefficient[2] <= 0;
             sum <= 0;
             coefficient_loaded <= 0;
         end else if (coefficient_loaded < N_TAPS) begin
+            coefficient[2] <= coefficient[1];
             coefficient[1] <= coefficient[0];
             coefficient[0] <= x_in;
             coefficient_loaded <= coefficient_loaded + 1;
         end else begin
-            sum <= product[0] + product[1];
+            sum <= product[0] + product[1] + product[2];
+            x[2] <= x[1];
             x[1] <= x[0];
             x[0] <= x_in;
         end
@@ -55,6 +59,7 @@ module gbsha_top #(parameter N_TAPS = 2,
 
     assign product[0] = x[0] * coefficient[0];
     assign product[1] = x[1] * coefficient[1];
+    assign product[2] = x[2] * coefficient[2];
     // assign sum = product[0]; // + product[1]; // WORKS
     // assign sum = product[0] + product[1];     // FAILS
 

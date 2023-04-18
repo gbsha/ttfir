@@ -10,13 +10,13 @@ def binstr2signed_int(x):
 
 # copy parameters to tb.v, ttfir.v, test.py
 # as files may be used individually
-N_TAPS = 1
+N_TAPS = 3
 BW_in =  6
 BW_out = 8
 
 # test sequence for multiplication
-input =                 [1,-3, 1, 3, 4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-output_expected = [0, 0, 0, 0,-3,-8,-9,-11,-13, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+input =                    [1,-3, 0, 1, 3, 4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+output_expected = [0, 0, 0, 0, 0, 0,-3,-8,-9,-11,-13, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 # # test sequence for multiplication
 # input =             [ 3, 1, 3,  4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
