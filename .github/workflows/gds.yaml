@@ -9,9 +9,11 @@ jobs:
   gds:
     env:
       # OPENLANE_TAG:           2023.02.14
-        OPENLANE_TAG:           2023.04.18
+      # OPENLANE_TAG:           2023.04.18
+        OPENLANE_TAG:           2022.11.19
       # OPENLANE_IMAGE_NAME:    efabless/openlane:4cd0986b3ae550cdf7a6d0fba4e0657012f635d8-amd64
-        OPENLANE_IMAGE_NAME:    efabless/openlane:00aff7d51f84380d9c02b5fb4f5bf5bdb95f5cd5-amd64
+      # OPENLANE_IMAGE_NAME:    efabless/openlane:00aff7d51f84380d9c02b5fb4f5bf5bdb95f5cd5-amd64
+        OPENLANE_IMAGE_NAME:    efabless/openlane:cb59d1f84deb5cedbb5b0a3e3f3b4129a967c988-amd64
         OPENLANE_ROOT:          /home/runner/openlane
         PDK_ROOT:               /home/runner/pdk
         PDK:                    sky130A
