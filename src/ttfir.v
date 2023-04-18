@@ -2,7 +2,7 @@
 
 // copy parameters to tb.v, ttfir.v, test.py
 // as files may be used individually
-module gbsha_top #(parameter N_TAPS = 1,
+module gbsha_top #(parameter N_TAPS = 2,
                              BW_in = 6,
                              BW_product = 12,
                              BW_out = 8
@@ -14,7 +14,7 @@ module gbsha_top #(parameter N_TAPS = 1,
     // control signals
     wire clk = io_in[0];
     wire reset = io_in[1];
-    reg coefficient_loaded;
+    reg [3:0] coefficient_loaded;
 
     // inputs and output
     wire [BW_in - 1:0] x_in = io_in[BW_in - 1 + 2:2];
@@ -24,24 +24,38 @@ module gbsha_top #(parameter N_TAPS = 1,
         assign io_out[7:BW_out] = 0;
 
     // storage for input, multiplier
-    reg signed [BW_in - 1:0] coefficient;
-    reg signed [BW_in - 1:0] x;
+    reg signed [BW_in - 1:0] coefficient [N_TAPS -1:0];
+    reg signed [BW_in - 1:0] x [N_TAPS -1:0];
+
+    // intermediate
+    wire signed [BW_product - 1:0] product [N_TAPS -1: 0];
+    reg signed [BW_product + 1 - 1:0] sum;
+
 
     always @(posedge clk) begin
         // initialize shift register with zeros
         if (reset) begin
-            x <= 0;
-            coefficient <= 0;
+            x[0] <= 0;
+            x[1] <= 0;
+            coefficient[0] <= 0;
+            coefficient[1] <= 0;
+            sum <= 0;
             coefficient_loaded <= 0;
-        end else if (!coefficient_loaded) begin
-            coefficient <= x_in;
-            coefficient_loaded <= 1;
+        end else if (coefficient_loaded < N_TAPS) begin
+            coefficient[1] <= coefficient[0];
+            coefficient[0] <= x_in;
+            coefficient_loaded <= coefficient_loaded + 1;
         end else begin
-            x <= x_in;
+            sum <= product[0] + product[1];
+            x[1] <= x[0];
+            x[0] <= x_in;
         end
     end
 
-    wire signed [BW_product - 1:0] product;
-    assign product = x * coefficient;
-    assign y_out = product[BW_out - 1:0];
+    assign product[0] = x[0] * coefficient[0];
+    assign product[1] = x[1] * coefficient[1];
+    // assign sum = product[0]; // + product[1]; // WORKS
+    // assign sum = product[0] + product[1];     // FAILS
+
+    assign y_out = sum[BW_out - 1:0];
 endmodule
