@@ -5,6 +5,7 @@
 module gbsha_top #(parameter N_TAPS = 2,
                              BW_in = 6,
                              BW_product = 12,
+                             BW_sum = 13,
                              BW_out = 8
                              )
 (
@@ -29,7 +30,7 @@ module gbsha_top #(parameter N_TAPS = 2,
 
     // intermediate
     wire signed [BW_product - 1:0] product [N_TAPS -1: 0];
-    reg signed [BW_product + 1 - 1:0] sum;
+    reg signed [BW_sum - 1:0] sum;
 
 
     always @(posedge clk) begin
