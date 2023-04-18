@@ -5,7 +5,7 @@
 module gbsha_top #(parameter N_TAPS = 5,
                              BW_in = 6,
                              BW_product = 12,
-                             BW_sum = 14,
+                             BW_sum = 15,
                              BW_out = 8
                              )
 (
