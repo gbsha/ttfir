@@ -8,16 +8,25 @@ def binstr2signed_int(x):
         return -int(x, 2)
     return int(x[1:], 2) - int(x[0], 2) * 2**(bw - 1)
 
-
 # copy parameters to tb.v, ttfir.v, test.py
 # as files may be used individually
-N_TAPS = 5
-BW_in = 6
+N_TAPS = 1
+BW_in =  6
 BW_out = 8
 
-input = [1, 0, 0, 0, 0, 30, 31, -32, -31, -30, -29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-input_data =      [0, 0, 0, 0, 0, 30, 31, -32, -31, -30, -29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-output_expected = [0, 0, 0, 0, 0, 0, 30, 31, -32, -31, -30, -29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+# test sequence for multiplication
+input =            [ -3, 1, 3,  4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+output_expected = [0, 0,-3,-9,-12,-15,-18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+# # test sequence for multiplication
+# input =             [ 3, 1, 3,  4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+# input_sign =        [ 1, 0, 0,  1,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+# output_expected = [0, 0,-3,-9, 12,-15,-18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+# # test sequence for subtraction
+# input =              [3, 1, 3,  4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+# output_expected = [0,-3,-2, 0,  1,  2,  3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3]
+
 @cocotb.test()
 async def test_gbsha_top(dut):
     dut._log.info("start")
