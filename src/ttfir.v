@@ -17,54 +17,31 @@ module gbsha_top #(parameter N_TAPS = 1,
     reg coefficient_loaded;
 
     // inputs and output
-    wire signed [BW_in - 1:0] x_in = io_in[BW_in - 1 + 2:2];
-    reg signed [BW_out - 1:0] y_out;
+    wire [BW_in - 1:0] x_in = io_in[BW_in - 1 + 2:2];
+    wire [BW_out - 1:0] y_out;
     assign io_out[BW_out - 1:0] = y_out;
     if (BW_out < 8)
         assign io_out[7:BW_out] = 0;
 
-    // storage for input, multiplier, product
-    reg [BW_in - 1:0] coefficient;
-    reg coefficient_sign;
-    reg [BW_in - 1:0] x;
-    reg x_sign;
-
-    wire [BW_product - 1:0] product;
-    wire signed [BW_product - 1:0] product_signed;
+    // storage for input, multiplier
+    reg signed [BW_in - 1:0] coefficient;
+    reg signed [BW_in - 1:0] x;
 
     always @(posedge clk) begin
         // initialize shift register with zeros
         if (reset) begin
             x <= 0;
-            x_sign <= 0;
             coefficient <= 0;
-            coefficient_sign <= 0;
             coefficient_loaded <= 0;
         end else if (!coefficient_loaded) begin
-            coefficient_sign <= x_in[BW_in - 1];
-            case (x_in[BW_in - 1])
-                1'b0: coefficient[BW_in - 1:0] <= x_in[BW_in - 1:0];
-                1'b1: coefficient[BW_in - 1:0] <= -x_in[BW_in - 1:0];
-            endcase
+            coefficient <= x_in;
             coefficient_loaded <= 1;
         end else begin
-            x_sign <= x_in[BW_in - 1];
-            case (x_in[BW_in - 1])
-                1'b0: x[BW_in - 1:0] <= x_in[BW_in - 1:0];
-                1'b1: x[BW_in - 1:0] <= -x_in[BW_in - 1:0];
-            endcase
+            x <= x_in;
         end
     end
 
+    wire signed [BW_product - 1:0] product;
     assign product = x * coefficient;
-    assign product_signed = product;
-
-    always @(*) begin
-        case({x_sign, coefficient_sign})
-            2'b00 : y_out = product_signed[BW_out - 1:0];
-            2'b01 : y_out = - product_signed[BW_out - 1:0];
-            2'b10 : y_out = - product_signed[BW_out - 1:0];
-            2'b11 : y_out = product_signed[BW_out - 1:0];
-        endcase
-    end
+    assign y_out = product[BW_out - 1:0];
 endmodule
