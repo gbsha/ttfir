@@ -1,11 +1,11 @@
 `default_nettype none
 
-// copy parameters to tb.v, ttfir.v, test.py
+// copy parameters to tb.v,
 // as files may be used individually
-module gbsha_top #(parameter N_TAPS = 6,
+module gbsha_ttfir_top #(parameter N_TAPS = 6,
                              BW_in = 6,
                              BW_product = 12,
-                             BW_sum = 15,
+                             BW_sum = 14,
                              BW_out = 8
                              )
 (
@@ -28,8 +28,9 @@ module gbsha_top #(parameter N_TAPS = 6,
     reg signed [BW_in - 1:0] coefficient [N_TAPS -1:0];
     reg signed [BW_in - 1:0] x [N_TAPS -1:0];
 
-    // intermediate
+    // intermediate values
     wire signed [BW_product - 1:0] product [N_TAPS -1: 0];
+    // output register
     reg signed [BW_sum - 1:0] sum;
 
 
@@ -75,8 +76,7 @@ module gbsha_top #(parameter N_TAPS = 6,
     assign product[3] = x[3] * coefficient[3];
     assign product[4] = x[4] * coefficient[4];
     assign product[5] = x[5] * coefficient[5];
-    // assign sum = product[0]; // + product[1]; // WORKS
-    // assign sum = product[0] + product[1];     // FAILS
 
-    assign y_out = sum[BW_out - 1:0];
+    // shift by 6 bits. Corresponds to division by 64
+    assign y_out = sum[BW_sum - 1:BW_sum - BW_out];
 endmodule

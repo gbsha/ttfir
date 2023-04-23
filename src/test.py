@@ -8,27 +8,11 @@ def binstr2signed_int(x):
         return -int(x, 2)
     return int(x[1:], 2) - int(x[0], 2) * 2**(bw - 1)
 
-# copy parameters to tb.v, ttfir.v, test.py
-# as files may be used individually
-N_TAPS = 6
-BW_in =  6
-BW_out = 8
-
-# test sequence for multiplication
-input =                    [1,-3, 0, 0, 0, 0, 1, 3, 4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-output_expected = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3,-8,-9,-11,-13, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-# # test sequence for multiplication
-# input =             [ 3, 1, 3,  4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-# input_sign =        [ 1, 0, 0,  1,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-# output_expected = [0, 0,-3,-9, 12,-15,-18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-# # test sequence for subtraction
-# input =              [3, 1, 3,  4,  5,  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-# output_expected = [0,-3,-2, 0,  1,  2,  3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3]
 
 @cocotb.test()
-async def test_gbsha_top(dut):
+async def test_delay(dut):
+    input =           [0, 0, 0, 0, 0, 8, 8, 0, 0]
+    output_expected = [0, 0, 0, 0, 0, 0, 0, 0, 1]
     dut._log.info("start")
     clock = Clock(dut.clk, 10, units="us")
     cocotb.start_soon(clock.start())
@@ -37,8 +21,84 @@ async def test_gbsha_top(dut):
     await ClockCycles(dut.clk, 10)
     dut.rst.value = 0
     dut._log.info("checking...")
-    for i, x in enumerate(input):
+    for clock_cycle, (x, y_expected) in enumerate(zip(input, output_expected)):
         dut.x_in.value = x
         await ClockCycles(dut.clk, 1)
-        output_actual = binstr2signed_int(dut.y_out.value.binstr)
-        print(f"{output_actual = }, expected = {output_expected[i]}")
+        y_actual = binstr2signed_int(dut.y_out.value.binstr)
+        assert y_actual == y_expected, f"{clock_cycle = }: {y_actual = }, {y_expected = }"
+
+
+@cocotb.test()
+async def test_identity_function(dut):
+    input =           [0, 0, 0, 0, 0,16] + [x * 4 for x in range(-8, 8)] + [0, 0]
+    output_expected = [0, 0, 0, 0, 0, 0, 0, 0] + [x for x in range(-8, 8)]
+    dut._log.info("start")
+    clock = Clock(dut.clk, 10, units="us")
+    cocotb.start_soon(clock.start())
+    dut._log.info("reset")
+    dut.rst.value = 1
+    await ClockCycles(dut.clk, 10)
+    dut.rst.value = 0
+    dut._log.info("checking...")
+    for clock_cycle, (x, y_expected) in enumerate(zip(input, output_expected)):
+        dut.x_in.value = x
+        await ClockCycles(dut.clk, 1)
+        y_actual = binstr2signed_int(dut.y_out.value.binstr)
+        assert y_actual == y_expected, f"{clock_cycle = }: {y_actual = }, {y_expected = }"
+
+
+@cocotb.test()
+async def test_minus_function(dut):
+    input =           [0, 0, 0, 0, 0,-32] + [x * 2 for x in range(-16, 16)] + [0, 0]
+    output_expected = [0, 0, 0, 0, 0, 0, 0, 0] + [-x for x in range(-16, 16)]
+    dut._log.info("start")
+    clock = Clock(dut.clk, 10, units="us")
+    cocotb.start_soon(clock.start())
+    dut._log.info("reset")
+    dut.rst.value = 1
+    await ClockCycles(dut.clk, 10)
+    dut.rst.value = 0
+    dut._log.info("checking...")
+    for clock_cycle, (x, y_expected) in enumerate(zip(input, output_expected)):
+        dut.x_in.value = x
+        await ClockCycles(dut.clk, 1)
+        y_actual = binstr2signed_int(dut.y_out.value.binstr)
+        assert y_actual == y_expected, f"{clock_cycle = }: {y_actual = }, {y_expected = }"
+
+
+@cocotb.test()
+async def test_maximum_value(dut):
+    input =           [-32 for _ in range(12)] + 2 * [0]
+    output_expected = [0] * 8 + [i * 16 for i in range(1, 7)]
+    dut._log.info("start")
+    clock = Clock(dut.clk, 10, units="us")
+    cocotb.start_soon(clock.start())
+    dut._log.info("reset")
+    dut.rst.value = 1
+    await ClockCycles(dut.clk, 10)
+    dut.rst.value = 0
+    dut._log.info("checking...")
+    for clock_cycle, (x, y_expected) in enumerate(zip(input, output_expected)):
+        dut.x_in.value = x
+        await ClockCycles(dut.clk, 1)
+        y_actual = binstr2signed_int(dut.y_out.value.binstr)
+        assert y_actual == y_expected, f"{clock_cycle = }: {y_actual = }, {y_expected = }"
+
+
+@cocotb.test()
+async def test_minimum_value(dut):
+    input =           [-32] * 6 + [31] * 6
+    output_expected = [0] * 8 + [-32 * 31 * i // 2**6  for i in range(1, 7)]
+    dut._log.info("start")
+    clock = Clock(dut.clk, 10, units="us")
+    cocotb.start_soon(clock.start())
+    dut._log.info("reset")
+    dut.rst.value = 1
+    await ClockCycles(dut.clk, 10)
+    dut.rst.value = 0
+    dut._log.info("checking...")
+    for clock_cycle, (x, y_expected) in enumerate(zip(input, output_expected)):
+        dut.x_in.value = x
+        await ClockCycles(dut.clk, 1)
+        y_actual = binstr2signed_int(dut.y_out.value.binstr)
+        assert y_actual == y_expected, f"{clock_cycle = }: {y_actual = }, {y_expected = }"

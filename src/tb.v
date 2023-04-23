@@ -35,7 +35,7 @@ module tb #(parameter N_TAPS = 6,
     assign y_out = outputs[BW_out - 1:0];
 
     // instantiate the DUT
-    gbsha_top gbsha_top(
+    gbsha_ttfir_top gbsha_ttfir_top(
         `ifdef GL_TEST
             .vccd1( 1'b1),
             .vssd1( 1'b0),
