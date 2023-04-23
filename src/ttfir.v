@@ -2,7 +2,7 @@
 
 // copy parameters to tb.v,
 // as files may be used individually
-module gbsha_ttfir_top #(parameter N_TAPS = 6,
+module gbsha_ttfir_top #(parameter N_TAPS = 4,
                              BW_in = 6,
                              BW_product = 12,
                              BW_sum = 14,
@@ -41,28 +41,28 @@ module gbsha_ttfir_top #(parameter N_TAPS = 6,
             x[1] <= 0;
             x[2] <= 0;
             x[3] <= 0;
-            x[4] <= 0;
-            x[5] <= 0;
+            // x[4] <= 0;
+            // x[5] <= 0;
             coefficient[0] <= 0;
             coefficient[1] <= 0;
             coefficient[2] <= 0;
             coefficient[3] <= 0;
-            coefficient[4] <= 0;
-            coefficient[5] <= 0;
+            // coefficient[4] <= 0;
+            // coefficient[5] <= 0;
             sum <= 0;
             coefficient_loaded <= 0;
         end else if (coefficient_loaded < N_TAPS) begin
-            coefficient[5] <= coefficient[4];
-            coefficient[4] <= coefficient[3];
+            // coefficient[5] <= coefficient[4];
+            // coefficient[4] <= coefficient[3];
             coefficient[3] <= coefficient[2];
             coefficient[2] <= coefficient[1];
             coefficient[1] <= coefficient[0];
             coefficient[0] <= x_in;
             coefficient_loaded <= coefficient_loaded + 1;
         end else begin
-            sum <= product[0] + product[1] + product[2] + product[3] + product[4] + product[5];
-            x[5] <= x[4];
-            x[4] <= x[3];
+            sum <= product[0] + product[1] + product[2] + product[3]; // + product[4]; // + product[5];
+            // x[5] <= x[4];
+            // x[4] <= x[3];
             x[3] <= x[2];
             x[2] <= x[1];
             x[1] <= x[0];
@@ -74,8 +74,8 @@ module gbsha_ttfir_top #(parameter N_TAPS = 6,
     assign product[1] = x[1] * coefficient[1];
     assign product[2] = x[2] * coefficient[2];
     assign product[3] = x[3] * coefficient[3];
-    assign product[4] = x[4] * coefficient[4];
-    assign product[5] = x[5] * coefficient[5];
+    // assign product[4] = x[4] * coefficient[4];
+    // assign product[5] = x[5] * coefficient[5];
 
     // shift by 6 bits. Corresponds to division by 64
     assign y_out = sum[BW_sum - 1:BW_sum - BW_out];
