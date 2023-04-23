@@ -32,7 +32,7 @@ documentation:
   how_to_test:  |
       - reset high: shift registers for coefficient and output are set to zero.
       - reset low: 
-        - 4 clock cycles: 6bit coefficients in 2's complement format are loaded into registers.
+        - 4 clock cycles: 6bit coefficients in 2's complement format are loaded into registers. The coefficients are loaded in reverse order, i.e., coefficient[3], coefficient[2], coefficient[1], coefficient[0] must be provided in clock cycles 0, 1, 2, 3, respectively.
         - input at each clock cycle: 6bit inputs in 2's complement format are loaded into shift register.
         - output at each clock cycle: coefficients and input values in shift register are multiplied, added and output in 8bit 2's complement format.
       - relative to the input, the output is delayed by input register + output register = 2 clock cycles.
