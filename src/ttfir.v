@@ -1,6 +1,6 @@
 `default_nettype none
 
-// copy parameters to tb.v,
+// copy parameters to tb.v, test.py
 // as files may be used individually
 module gbsha_ttfir_top #(parameter N_TAPS = 4,
                              BW_in = 6,

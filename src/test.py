@@ -3,6 +3,7 @@ from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
 
 def binstr2signed_int(x):
+    # Converte binary str x to integer, assuming that x is in 2's complement format.
     bw = len(x)
     if bw == 1:
         return -int(x, 2)
