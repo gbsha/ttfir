@@ -21,10 +21,10 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
 
     // inputs and output
     wire signed [BW_in - 1:0] x_in = io_in[BW_in - 1 + 2:2];
-    reg [BW_out - 1:0] y_out;
+    wire [BW_out - 1:0] y_out;
     assign io_out[BW_out - 1:0] = y_out;
-    // if (BW_out < 8)
-    //     assign io_out[7:BW_out] = 0;
+    if (BW_out < 8)
+        assign io_out[7:BW_out] = 0;
 
     // storage for input, multiplier
     reg signed [BW_in - 1:0] coefficient [N_TAPS -1:0];
@@ -34,7 +34,6 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
     wire signed [BW_product - 1:0] product [N_TAPS -1: 0];
     // output register
     reg signed [BW_sum - 1:0] sum;
-
 
     always @(posedge clk) begin
         // initialize shift register with zeros
@@ -55,7 +54,6 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
             coefficient_loaded <= 0;
             provide_lsb <= 0;
             read <= 1;
-            y_out <= 0;
         end else if (coefficient_loaded == 0) begin
             provide_lsb <= x_in;
             coefficient_loaded <= 1;
@@ -68,8 +66,7 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
             coefficient[0] <= x_in;
             coefficient_loaded <= coefficient_loaded + 1;
         end else if (read) begin
-            sum = product[0] + product[1] + product[2] + product[3]; // + product[4]; // + product[5];
-            y_out = sum[BW_sum - 1:BW_sum - BW_out];
+            sum <= product[0] + product[1] + product[2] + product[3]; // + product[4]; // + product[5];
             // x[5] <= x[4];
             // x[4] <= x[3];
             // x[3] <= x[2];
@@ -78,8 +75,7 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
             x[0] <= x_in;
             read <= read + provide_lsb;
         end else begin
-            // sum[BW_sum - 1:BW_sum - BW_out] <= sum[BW_out - 1:0] << (BW_sum - BW_out);
-            y_out = sum[BW_out - 1:0];
+            sum[BW_sum - 1:BW_sum - BW_out] <= sum[BW_out - 1:0] << (BW_sum - BW_out);
         end
     end
 
@@ -95,6 +91,6 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
     // assign product[4] = x[4] * coefficient[4];
     // assign product[5] = x[5] * coefficient[5];
 
-    // shift by 6 bits. Corresponds to division by 64
-    // assign y_out = sum[BW_sum - 1:BW_sum - BW_out];
+    // shift by 5 bits. Corresponds to division by 32
+    assign y_out = sum[BW_sum - 1:BW_sum - BW_out];
 endmodule
