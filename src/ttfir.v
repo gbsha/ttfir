@@ -15,13 +15,13 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
     // control signals
     wire clk = io_in[0];
     wire reset = io_in[1];
-    reg [3:0] coefficient_loaded;
+    reg [2:0] coefficient_loaded;
     reg provide_lsb;
     reg read;
 
     // inputs and output
     wire signed [BW_in - 1:0] x_in = io_in[BW_in - 1 + 2:2];
-    wire [BW_out - 1:0] y_out;
+    reg [BW_out - 1:0] y_out;
     assign io_out[BW_out - 1:0] = y_out;
     // if (BW_out < 8)
     //     assign io_out[7:BW_out] = 0;
@@ -55,6 +55,7 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
             coefficient_loaded <= 0;
             provide_lsb <= 0;
             read <= 1;
+            y_out <= 0;
         end else if (coefficient_loaded == 0) begin
             provide_lsb <= x_in;
             coefficient_loaded <= 1;
@@ -67,7 +68,8 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
             coefficient[0] <= x_in;
             coefficient_loaded <= coefficient_loaded + 1;
         end else if (read) begin
-            sum <= product[0] + product[1] + product[2] + product[3]; // + product[4]; // + product[5];
+            sum = product[0] + product[1] + product[2] + product[3]; // + product[4]; // + product[5];
+            y_out = sum[BW_sum - 1:BW_sum - BW_out];
             // x[5] <= x[4];
             // x[4] <= x[3];
             // x[3] <= x[2];
@@ -76,7 +78,8 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
             x[0] <= x_in;
             read <= read + provide_lsb;
         end else begin
-            sum[BW_sum - 1:BW_sum - BW_out] <= sum[BW_out - 1:0] << (BW_sum - BW_out);
+            // sum[BW_sum - 1:BW_sum - BW_out] <= sum[BW_out - 1:0] << (BW_sum - BW_out);
+            y_out = sum[BW_out - 1:0];
         end
     end
 
@@ -93,5 +96,5 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
     // assign product[5] = x[5] * coefficient[5];
 
     // shift by 6 bits. Corresponds to division by 64
-    assign y_out = sum[BW_sum - 1:BW_sum - BW_out];
+    // assign y_out = sum[BW_sum - 1:BW_sum - BW_out];
 endmodule
