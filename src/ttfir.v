@@ -16,6 +16,8 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
     wire clk = io_in[0];
     wire reset = io_in[1];
     reg [3:0] coefficient_loaded;
+    reg provide_lsb;
+    reg read;
 
     // inputs and output
     wire [BW_in - 1:0] x_in = io_in[BW_in - 1 + 2:2];
@@ -51,7 +53,12 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
             // coefficient[5] <= 0;
             sum <= 0;
             coefficient_loaded <= 0;
-        end else if (coefficient_loaded < N_TAPS) begin
+            provide_lsb <= 0;
+            read <= 1;
+        end else if (coefficient_loaded == 0) begin
+            provide_lsb <= x_in;
+            coefficient_loaded <= 1;
+        end else if (coefficient_loaded < N_TAPS + 1) begin
             // coefficient[5] <= coefficient[4];
             // coefficient[4] <= coefficient[3];
             coefficient[3] <= coefficient[2];
@@ -59,7 +66,7 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
             coefficient[1] <= coefficient[0];
             coefficient[0] <= x_in;
             coefficient_loaded <= coefficient_loaded + 1;
-        end else begin
+        end else if (read) begin
             sum <= product[0] + product[1] + product[2] + product[3]; // + product[4]; // + product[5];
             // x[5] <= x[4];
             // x[4] <= x[3];
@@ -67,6 +74,9 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
             x[2] <= x[1];
             x[1] <= x[0];
             x[0] <= x_in;
+            read <= read + provide_lsb;
+        end else begin
+            sum[BW_sum - 1:BW_sum - BW_out] <= sum[BW_out - 1:0] << (BW_sum - BW_out);
         end
     end
 
