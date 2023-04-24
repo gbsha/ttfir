@@ -5,7 +5,7 @@
 module gbsha_ttfir_top #(parameter N_TAPS = 4,
                              BW_in = 6,
                              BW_product = 11,
-                             BW_sum = 14,
+                             BW_sum = 13,
                              BW_out = 8
                              )
 (
