@@ -4,7 +4,7 @@
 // as files may be used individually
 module gbsha_ttfir_top #(parameter N_TAPS = 4,
                              BW_in = 6,
-                             BW_product = 12,
+                             BW_product = 11,
                              BW_sum = 14,
                              BW_out = 8
                              )
@@ -20,15 +20,15 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
     reg read;
 
     // inputs and output
-    wire [BW_in - 1:0] x_in = io_in[BW_in - 1 + 2:2];
+    wire signed [BW_in - 1:0] x_in = io_in[BW_in - 1 + 2:2];
     wire [BW_out - 1:0] y_out;
     assign io_out[BW_out - 1:0] = y_out;
-    if (BW_out < 8)
-        assign io_out[7:BW_out] = 0;
+    // if (BW_out < 8)
+    //     assign io_out[7:BW_out] = 0;
 
     // storage for input, multiplier
     reg signed [BW_in - 1:0] coefficient [N_TAPS -1:0];
-    reg signed [BW_in - 1:0] x [N_TAPS -1:0];
+    reg signed [BW_in - 1:0] x [N_TAPS - 2:0];
 
     // intermediate values
     wire signed [BW_product - 1:0] product [N_TAPS -1: 0];
@@ -42,7 +42,7 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
             x[0] <= 0;
             x[1] <= 0;
             x[2] <= 0;
-            x[3] <= 0;
+            // x[3] <= 0;
             // x[4] <= 0;
             // x[5] <= 0;
             coefficient[0] <= 0;
@@ -70,7 +70,7 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
             sum <= product[0] + product[1] + product[2] + product[3]; // + product[4]; // + product[5];
             // x[5] <= x[4];
             // x[4] <= x[3];
-            x[3] <= x[2];
+            // x[3] <= x[2];
             x[2] <= x[1];
             x[1] <= x[0];
             x[0] <= x_in;
@@ -80,10 +80,14 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
         end
     end
 
-    assign product[0] = x[0] * coefficient[0];
-    assign product[1] = x[1] * coefficient[1];
-    assign product[2] = x[2] * coefficient[2];
-    assign product[3] = x[3] * coefficient[3];
+    assign product[0] = x_in * coefficient[0];
+    assign product[1] = x[0] * coefficient[1];
+    assign product[2] = x[1] * coefficient[2];
+    assign product[3] = x[2] * coefficient[3];
+    // assign product[0] = x[0] * coefficient[0];
+    // assign product[1] = x[1] * coefficient[1];
+    // assign product[2] = x[2] * coefficient[2];
+    // assign product[3] = x[3] * coefficient[3];
     // assign product[4] = x[4] * coefficient[4];
     // assign product[5] = x[5] * coefficient[5];
 
