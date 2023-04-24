@@ -110,7 +110,8 @@ async def test_minimum_value(dut):
 @cocotb.test()
 async def test_maximum_product_lsb(dut):
     input =           [1] + [0] * (N_TAPS - 1) + [-32, -31] + [0] * 20
-    output_expected = [0] * (N_TAPS + 2 + INPUT_REG) + [31, -32] + [0] * 20
+    output_expected = [0] * (N_TAPS + 2 + INPUT_REG) + [31, 0] + [0] * 20
+    output_bw = [1] * (N_TAPS + 2 + INPUT_REG) + [8, 5] + [0] * 20
     dut._log.info("start")
     clock = Clock(dut.clk, 10, units="us")
     cocotb.start_soon(clock.start())
@@ -119,10 +120,10 @@ async def test_maximum_product_lsb(dut):
     await ClockCycles(dut.clk, 10)
     dut.rst.value = 0
     dut._log.info("checking...")
-    for clock_cycle, (x, y_expected) in enumerate(zip(input, output_expected)):
+    for clock_cycle, (x, y_expected, y_bw) in enumerate(zip(input, output_expected, output_bw)):
         dut.x_in.value = x
         await ClockCycles(dut.clk, 1)
-        y_actual = binstr2signed_int(dut.y_out.value.binstr)
+        y_actual = binstr2signed_int(dut.y_out.value.binstr[-y_bw:])
         assert y_actual == y_expected, f"{clock_cycle = }: {y_actual = }, {y_expected = }"
 
 

@@ -75,7 +75,7 @@ module gbsha_ttfir_top #(parameter N_TAPS = 4,
             x[0] <= x_in;
             read <= read + provide_lsb;
         end else begin
-            sum <= sum <<< (BW_sum - BW_out);
+            sum[2 * (BW_sum - BW_out) - 1:BW_sum - BW_out] <= sum[BW_sum - BW_out -1:0];
             read <= read + provide_lsb;
         end
     end
